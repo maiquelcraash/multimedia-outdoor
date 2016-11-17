@@ -1,0 +1,99 @@
+/* estilo utilizado para criar efeito de fade na transição dos slides a aplicação do estilo é feita via Javascript */
+@keyframes fadey {
+    0% {
+        opacity: 0;
+    }
+    15% {
+        opacity: 1;
+    }
+    85% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+body {
+    font-family: Avenir, Arial, sans-serif;
+    margin: 0;
+    font-size: 0;
+}
+
+figure#slideshow {
+    width: 80%;
+    margin: 0 auto;
+    position: relative;
+    border: 1px solid #fff;
+}
+
+figure#slideshow img {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: auto;
+    opacity: 0;
+}
+
+figure#slideshow img:first-child {
+    position: relative;
+}
+
+#container:fullscreen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #fff;
+}
+
+#container:-moz-full-screen figure, #container:-ms-full-screen figure, #container:-webkit-fullscreen figure, #container:fullscreen figure {
+    width: 100%;
+    margin: 0 auto;
+    background: #fff;
+}
+
+:-webkit-full-screen {
+    width: 100%;
+    height: 100%;
+}
+
+*:-moz-full-screen {
+    background: #fff;
+}
+
+*:-webkit-full-screen {
+    background: #fff;
+}
+
+#tempo {
+    width: 120px;
+    height: 179px;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+}
+
+#marquee {
+    width: 100%;
+    position: fixed;
+    bottom: 10px;
+    height: 40px;
+    background-color: #110000;
+}
+
+
+#message{
+    text-align: right;
+    font-family: "Courier New", sans-serif;
+    margin-right: 50%;
+    width: 150%;
+    color: white;
+    font-size: 30px;
+    animation: marquee 7s linear infinite;
+}
+
+@keyframes marquee {
+    0%   { transform: translate(0, 0); }
+    100% { transform: translate(-100%, 0); }
+}
