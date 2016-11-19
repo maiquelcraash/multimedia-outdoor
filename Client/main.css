@@ -3,10 +3,10 @@
     0% {
         opacity: 0;
     }
-    15% {
+    1% {
         opacity: 1;
     }
-    85% {
+    99% {
         opacity: 1;
     }
     100% {
@@ -20,11 +20,13 @@ body {
     font-size: 0;
 }
 
+.container {
+    width: 100v;
+}
+
 figure#slideshow {
     display: table;
     text-align: center;
-    margin-left: auto;
-    margin-right: auto;
     position: relative;
     border: 1px solid #fff;
 }
@@ -37,6 +39,8 @@ figure#slideshow .slide {
     display: table-row;
     text-align: center;
     vertical-align: middle;
+        margin-left: auto;
+    margin-right: auto;
 
 }
 
@@ -47,7 +51,6 @@ figure#slideshow .slide:first-child {
 figure#slideshow .slide .title, figure#slideshow .slide .caption {
     height: 7vh;
     top: 10px;
-    color: red;
     background-color: aqua;
     text-align: center;
     font-size: 40px;

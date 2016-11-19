@@ -16,33 +16,40 @@ window.onload = function () {
 	var remote_images = {
 		images: [
 			{
-				url: "https://pbs.twimg.com/profile_images/583194780039045121/LF6M0JEu.jpg",
-				title: "Cachorro Quente",
-				caption: "Comendo"
+				url: "http://2.bp.blogspot.com/_V9pEmPxa5zk/TLH3h8RfNhI/AAAAAAAAAF8/jjbbT503KKA/s1600/propagandas-engracadas-10.jpg",
+				title: "Natura",
+				caption: "Shampoo",
+				color: "rgb(255,0,0)"
 			},
 			{
 				url: "http://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/happy-bot-tinkerbot.jpg",
 				title: "Robô",
-				caption: "Feliz"
+				caption: "Feliz",
+				color: "#00F"
 			},
 			{
 				url: "http://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/dada-voltaire-tinkerbot.jpg",
 				title: "Outro robo",
-				caption: "Triste pq n demos nome"
+				caption: "Triste pq n demos nome",
+				color: "green"
 			}
-		]
+		],
+		messages: ["Outro robo lindo e querido","O Pritsch n acreditva que podia ter mais mensagens"],
+		city:1399	
 	};
 
 	/* Objeto Slide */
-	function Slide(url, title, caption) {
+	function Slide(url, title, caption, color) {
 		this.url = url;
 		this.title = title;
 		this.caption = caption;
+		this.color = color;
 	}
 
 	/* Faz parse do JSON */
 	remote_images.images.forEach(function (element) {
-		var slide = new Slide(element.url, element.title, element.caption);
+		var slide = new Slide(element.url, element.title, element.caption, element.color);
+		console.log(element.color);
 		slides.push(slide);
 	});
 
@@ -52,14 +59,15 @@ window.onload = function () {
 	slides.forEach(function (slide) {
 		var img =
 			"<div class='slide'>" +
-			"	<div class='title'>" + slide.title + "</div>" +
+			"	<div class='title' style='color:" + slide.color + "' >" + slide.title + "</div>" +
 			"	<img src='" + slide.url + "'>" +
-			"	<div class='caption'>" + slide.caption + "</div>" +
+			"	<div class='caption' style='color:" + slide.color + "' >" + slide.caption + "</div>" +
 			"</div>";
 		slideshow.insertAdjacentHTML("beforeend", img);
 	});
 
-	var remote_message = "Texto que vai de lá pra cá";
+	var remote_message = remote_images.messages.join("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-----&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+
 
 	var message = document.getElementById("message");
 	message.innerHTML = remote_message;
@@ -94,5 +102,4 @@ window.onload = function () {
 
 
 };
-
 
