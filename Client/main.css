@@ -21,7 +21,7 @@ body {
 }
 
 .container {
-    width: 100v;
+    width: 100vw;
 }
 
 figure#slideshow {
@@ -39,7 +39,7 @@ figure#slideshow .slide {
     display: table-row;
     text-align: center;
     vertical-align: middle;
-        margin-left: auto;
+    margin-left: auto;
     margin-right: auto;
 
 }
@@ -57,8 +57,8 @@ figure#slideshow .slide .title, figure#slideshow .slide .caption {
 }
 
 figure#slideshow .slide img {
-    max-width: 90vw; !important;
-    max-height: 76vh; !important;
+    max-width: 90vw;  !important;
+    max-height: 76vh;  !important;
 }
 
 #tempo {
@@ -70,7 +70,6 @@ figure#slideshow .slide img {
 }
 
 #marquee {
-    width: 100%;
     position: fixed;
     bottom: 2vh;
     height: 7vh;
@@ -78,18 +77,16 @@ figure#slideshow .slide img {
 }
 
 #message {
-    text-align: right;
     font-family: "Courier New", sans-serif;
-    margin-right: 50%;
-    width: 150%;
     color: white;
     font-size: 30px;
     animation: marquee 7s linear infinite;
+    white-space: nowrap;
 }
 
 @keyframes marquee {
     0% {
-        transform: translate(0, 0);
+        transform: translate(100%, 0);
     }
     100% {
         transform: translate(-100%, 0);

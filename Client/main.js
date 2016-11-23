@@ -4,10 +4,17 @@
 
 
 window.onload = function () {
-	/*	var remote_images = [
-	 "http://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/dada-voltaire-tinkerbot.jpg",
-	 "http://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/happy-bot-tinkerbot.jpg",
-	 "https://pbs.twimg.com/profile_images/583194780039045121/LF6M0JEu.jpg"];*/
+
+	var connection = new WebSocket("ws://localhost:3001", "tcp");
+
+	connection.onopen = function () {
+		connection.send('Ping'); // Send the message 'Ping' to the server
+	};
+
+	connection.onmessage = function (e) {
+		console.log('Server: ' + e.data);
+	};
+
 
 	var slides = [];
 
@@ -72,13 +79,7 @@ window.onload = function () {
 	var message = document.getElementById("message");
 	message.innerHTML = remote_message;
 
-	/*	function iframeRef(frameRef) {
-	 return frameRef.contentWindow
-	 ? frameRef.contentWindow.document
-	 : frameRef.contentDocument
-	 }
 
-	 var tempoFrame = iframeRef(document.getElementById('tempo').firstElementChild);*/
 
 
 	/*$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*/
