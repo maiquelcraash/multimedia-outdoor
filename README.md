@@ -1,32 +1,13 @@
 Trabalho Final Microprocessador Avançados - UNIVATES - 2016B
 
-Exemplo JSON:
-		var remote_images = {
-			images: [
-				{
-					url: "http://2.bp.blogspot.com/_V9pEmPxa5zk/TLH3h8RfNhI/AAAAAAAAAF8/jjbbT503KKA/s1600/propagandas-engracadas-10.jpg",
-					title: "Natura",
-					caption: "Shampoo",
-					color: "rgb(255,0,0)"
-				},
-				{
-					url: "http://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/happy-bot-tinkerbot.jpg",
-					title: "Robô",
-					caption: "Feliz",
-					color: "#00F"
-				},
-				{
-					url: "http://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/dada-voltaire-tinkerbot.jpg",
-					title: "Outro robo",
-					caption: "Triste pq n demos nome",
-					color: "green"
-				}
-			],
-			messages: ["Outro robo lindo e querido","O Pritsch n acreditva que podia ter mais mensagens"],
-			city:1399
-		};
-		
-		
-		Exemplo JSON STRING:
-		
-		"{\"images\":[{\"url\":\"../img/1.png\",\"title\":\"Natura\",\"caption\":\"Shampoo\",\"color\":\"rgb(255,0,0)\"},{\"url\":\"http://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/happy-bot-tinkerbot.jpg\",\"title\":\"Robô\",\"caption\":\"Feliz\",\"color\":\"#00F\"},{\"url\":\"http://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/dada-voltaire-tinkerbot.jpg\",\"title\":\"Outro robo\",\"caption\":\"Triste pq n demos nome\",\"color\":\"green\"}],\"messages\":[\"Outro robo lindo e querido\",\"O Pritsch n acreditva que podia ter mais mensagens\"],\"city\":1399}";
+Como Configurar e Rodar?
+
+ - Dentro da pasta "slides" deve conter 1 pasta para cada slide a ser exibido. 
+    - Cada slide, deverá conter uma imagem chamada "img" (formato png, jpg max 1,5MB)
+    - Cada slide, deverá conter um arquivo "text.txt" onde a 1ª linha deve ser o título, a 2ª deve ser o subtítulo e a 3ª, a cor na qual o texto deve aparecer
+ - Configurar no arquivo "slides/config.properties" as mensagens e a cidade a ser utilizada na informação do clima
+ - Compilar o arquivo server.c
+    - $ gcc -o server server.c
+ - Rodar o server com a porta 3001
+    - ./server 3001
+ - Abrir o arquivo index.html no firefox ou chrome

@@ -22,10 +22,9 @@
 #include <dirent.h>
 
 #define BUFSIZE 1024
+#define MAXLEN  1000000                                                   //10MB
 
-void getData();
-
-void getSlidesCount();
+char *getData();
 
 /*
  * error - wrapper for perror
@@ -35,18 +34,6 @@ void error(char *msg) {
     exit(1);
 }
 
-char reply[50000000] =                                                       //2 MB
-        "HTTP/1.0 200 OK\n"
-                "Content-type: application/json\n"
-                "Upgrade: websocket\n"
-                "Connnection: upgrade\n"
-                "Sec-WebSocket-Key: {see RFC6455 Section 11.3.1}\n"
-                "Sec-WebSocket-Version: {see RFC6455 Section 11.3.5}\n"
-                "Access-Control-Allow-Origin: *\n"
-                "\n"
-                //"{\"images\":[{\"url\":\"../img/1.png\",\"title\":\"Natura\",\"caption\":\"Shampoo\",\"color\":\"rgb(255,0,0)\"},{\"url\":\"http://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/happy-bot-tinkerbot.jpg\",\"title\":\"Robô\",\"caption\":\"Feliz\",\"color\":\"#00F\"},{\"url\":\"http://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/dada-voltaire-tinkerbot.jpg\",\"title\":\"Outro robo\",\"caption\":\"Triste pq n demos nome\",\"color\":\"green\"}],\"messages\":[\"Outro robo lindo e querido\",\"O Pritsch n acreditva que podia ter mais mensagens\"],\"city\":1399}";
-                //"{\"images\":[{\"url\":\"data:image/png;base64,e3miTj7qEAAAAAElFTkSuQmCC\",\"title\":\"Natura\",\"caption\":\"Shampoo\",\"color\":\"rgb(255,0,0)\"},{\"url\":\"http://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/happy-bot-tinkerbot.jpg\",\"title\":\"Robô\",\"caption\":\"Feliz\",\"color\":\"#00F\"},{\"url\":\"http://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/dada-voltaire-tinkerbot.jpg\",\"title\":\"Outro robo\",\"caption\":\"Triste pq n demos nome\",\"color\":\"green\"}],\"messages\":[\"Outro robo lindo e querido\",\"O Pritsch n acreditva que podia ter mais mensagens\"],\"city\":1399}";
-                "{\"images\":[";
 
 int main(int argc, char **argv) {
     int parentfd; /* parent socket */
@@ -163,30 +150,38 @@ int main(int argc, char **argv) {
         }
         printf("server received %d bytes: %s", n, buf);
 
-        getData();
+        char *data = getData();
 
         /*
          * write: echo the input string back to the client
          */
         n = 0;
         bzero(buf, BUFSIZE);
-        buf[0] = "9";
-        buf[1] = "8";
-        //n = write(connection, reply, strlen(reply));
-        n = send(connection, reply, strlen(reply), 0);
+
+
+        /* Manda o HEADER */
+        n = send(connection, header, strlen(header), 0);
         if (n < 0) {
             error("ERROR writing to socket");
         }
 
+        /* Manda o conteúdo */
+        n = send(connection, data, strlen(data), 0);
+        if (n < 0) {
+            error("ERROR writing to socket");
+        }
+
+        /* Fecha a conexão */
+        hostaddrp = NULL;
+        hostp = NULL;
+        data = NULL;
         close(connection);
     }
 }
 
-void getData() {
-    getSlidesCount();
-}
-
-void getSlidesCount() {
+char *getData() {
+    char data[MAXLEN] =
+            "{\"images\":[";
     DIR *dirp;
     struct dirent *entry;
 
@@ -205,12 +200,14 @@ void getSlidesCount() {
                 innerDIR = opendir(dir);                            //abre o diretório do slide
 
                 char imgBuffer[1048576];                            //Max 1MB
-                char titleBuffer[400];                              //Max 400 caracteres
-                char captionBuffer[400];                            //Max 400 caracteres
-                char colorBuffer[100];
+                char textBuffer[600];
+                char titleBuffer[200];
+                char captionBuffer[200];
+                char colorBuffer[200];
 
-                while ((innerEntry = readdir(innerDIR)) != NULL) {  //itera em cada diretório
-                    if (innerEntry->d_type == DT_REG) {             //considera somente arquivos
+                /* while que itera os arquivos dentro da pasta slideN */
+                while ((innerEntry = readdir(innerDIR)) != NULL) {
+                    if (innerEntry->d_type == DT_REG) {             //considera somente tipo arquivos
 
                         char currentDir[200];
                         strcat(currentDir, dir);
@@ -235,27 +232,98 @@ void getSlidesCount() {
                                 break;
                             }
 
-                            fread(imgBuffer, 1, INT32_MAX, fpin);
+                            fread(imgBuffer, 1, sizeof imgBuffer, fpin);
+
+                            /* Retira um possível enter que possa ter no arquivo */
+                            char *pos = strchr(imgBuffer, '\n');
+                            pos[0] = '\0';
+
                             fclose(fpin);
                         }
 
                         else if (strstr(innerEntry->d_name, "text")) {
-                            //TODO ler os texts
+                            FILE *fpin;
+                            fpin = fopen(currentDir, "rt");
+
+                            fread(textBuffer, 1, sizeof textBuffer, fpin);
+
+                            char *pos = strstr(textBuffer, "\n") + 1;
+
+                            /* Pega o color */
+                            char *color = strstr(pos + 1, "\n") + 1;
+
+
+                            /* Pega o title */
+                            int i = 0;
+                            for (i; i < sizeof textBuffer; i++) {
+                                if (textBuffer[i] != '\n' && textBuffer[i] != '\0') {
+                                    titleBuffer[i] = textBuffer[i];
+                                }
+                                else {
+                                    break;
+                                }
+                            }
+
+                            /* Pega o caption */
+                            for (i = 0; i < 200; i++) {
+                                if (pos[i] != '\n' && pos[i] != '\0') {
+                                    captionBuffer[i] = pos[i];
+                                }
+                                else {
+                                    break;
+                                }
+                            }
                         }
 
-                        bzero(currentDir, 200);
+                        bzero(currentDir, sizeof currentDir);
                     }
                 }
-                char buf[1048576] = "{\\\"url\\\":\\\"data:image/png;base64,";
+
+                /* monta o slide em JSON */
+                //"{\"images\":[{\"url\":\"../img/1.png\",\"title\":\"Natura\",\"caption\":\"Shampoo\",\"color\":\"rgb(255,0,0)\"},{\"url\":\"http://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/happy-bot-tinkerbot.jpg\",\"title\":\"Robô\",\"caption\":\"Feliz\",\"color\":\"#00F\"},{\"url\":\"http://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/dada-voltaire-tinkerbot.jpg\",\"title\":\"Outro robo\",\"caption\":\"Triste pq n demos nome\",\"color\":\"green\"}],\"messages\":[\"Outro robo lindo e querido\",\"O Pritsch n acreditva que podia ter mais mensagens\"],\"city\":1399}";
+                char buf[2048576] = "{\"url\":\"data:image/png;base64,";
                 strcat(buf, imgBuffer);
                 strcat(buf, "\",\"title\":\"");
-                //strcat(reply, buf);
-                //TODO concatenar os texts
+                strcat(buf, titleBuffer);
+                strcat(buf, "\",\"caption\":\"");
+                strcat(buf, captionBuffer);
+                strcat(buf, "\",\"color\":\"");
+                strcat(buf, colorBuffer);
+                strcat(buf, "\"},");
+
+                /* adiciona o slide ao array de slides */
+                strcat(data, buf);
+
+
+                //Limpa os arrays
+                bzero(imgBuffer, sizeof imgBuffer);
+                bzero(textBuffer, sizeof textBuffer);
+                bzero(colorBuffer, sizeof colorBuffer);
+                bzero(captionBuffer, sizeof captionBuffer);
+                bzero(titleBuffer, sizeof titleBuffer);
 
             }
         }
     }
     closedir(dirp);
+
+    FILE *fpin;
+    fpin = fopen("slides/config.properties", "rt");
+
+    char *msgBuffer[2000];
+    fread(msgBuffer, 1, sizeof msgBuffer, fpin);
+
+    /* Retira a vírgula do último objeto */
+    char *pos = strchr(data, '\0') - 1;
+    pos[0] = '\0';
+
+    strcat(data, "],");
+    strcat(data, msgBuffer);
+    strcat(data, "}");
+
+    return data;
+
 }
+
 
 //TODO Segmentar em métodos menores
