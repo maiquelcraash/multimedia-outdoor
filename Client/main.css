@@ -51,27 +51,27 @@ figure#slideshow .slide:first-child {
 figure#slideshow .slide .title, figure#slideshow .slide .caption {
     height: 7vh;
     top: 10px;
-    background-color: aqua;
+    background-color: #ffa90b;
     text-align: center;
-    font-size: 40px;
+    font-size: 5vh;
 }
 
 figure#slideshow .slide img {
-    max-width: 90vw;  !important;
+    max-width: 70vw;  !important;
     max-height: 76vh;  !important;
 }
 
 #tempo {
-    width: 120px;
-    height: 179px;
+    width: 30vw;
+    /*max-height: 76vh;*/
     position: fixed;
-    top: 10px;
-    left: 10px;
+    top: 20px;
+    right: 20px;
 }
 
 #marquee {
     position: fixed;
-    bottom: 2vh;
+    bottom: 10px;
     height: 7vh;
     background-color: #110000;
 }
@@ -80,13 +80,14 @@ figure#slideshow .slide img {
     font-family: "Courier New", sans-serif;
     color: white;
     font-size: 30px;
+    line-height: 6vh;
     animation: marquee 7s linear infinite;
     white-space: nowrap;
 }
 
 @keyframes marquee {
     0% {
-        transform: translate(100%, 0);
+        transform: translate(100vw, 0);
     }
     100% {
         transform: translate(-100%, 0);
