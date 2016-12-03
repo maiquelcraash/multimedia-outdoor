@@ -20,11 +20,15 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <dirent.h>
+#include <fcntl.h>
 
 #define BUFSIZE 1024
 #define MAXLEN  1000000                                                   //10MB
 
 char *getData();
+char *getWeather();
+double getTemperature();
+double temperature(char *string);
 
 /*
  * error - wrapper for perror
@@ -48,6 +52,8 @@ int main(int argc, char **argv) {
     int optval; /* flag value for setsockopt */
     int n; /* message byte size */
 
+    //Montar os slots para ler temperatura
+    //system( "echo cape-bone-iio > /sys/devices/bone_capemgr.8/slots" );
 
     char header[1024] = "HTTP/1.0 200 OK\n"
             "Content-type: application/json\n"
@@ -241,6 +247,7 @@ char *getData() {
                             fpin = fopen(currentDir, "rt");
 
                             fread(textBuffer, 1, sizeof textBuffer, fpin);
+                            fclose(fpin);
 
                             char *pos = strstr(textBuffer, "\n") + 1;
 
@@ -316,11 +323,50 @@ char *getData() {
     strcat(data, msgBuffer);                //pega as infos do config.properties.
     //strcat(data,",\"temperature\":\"");
     //strcat(data, tempBuffer);
-    strcat(data, "}");                    //fecha o json
+    strcat(data, "}");                      //fecha o json
+    fclose(fpin);
+
+    char *weather = getWeather();
+
+    double temp = getTemperature();
 
     return data;
 
 }
 
 
-//TODO Segmentar em métodos menores
+char *getWeather(){
+    char data[300000] = "";
+
+    FILE *fpin;
+    fpin = fopen("slides/config.properties", "rt");
+    char *msgBuffer[2000];
+    fread(msgBuffer, 1, sizeof msgBuffer, fpin);
+    char *pos = strchr(msgBuffer, ']') + 10;
+
+    return data;
+}
+
+double temperature(char *string) {
+    int value = atoi(string);
+    double millivolts = ( value * 2.8 ) / 1024 ;
+    double temperature = ( millivolts - 0.5 ) * 100;
+    //double millivolts = (value / 4096.0) * 1800;
+    //double temperature = (millivolts - 500.0) / 10.0;
+    return temperature;
+}
+
+double getTemperature(){
+    double temperatura;
+    int fd = open("/sys/devices/ocp.2/helper.14/AIN1", O_RDONLY);
+
+    char bufferTemp[1024];
+    int ret = read(fd, bufferTemp, sizeof(bufferTemp));
+    if (ret != -1) {
+        bufferTemp[ret] = NULL;
+        temperatura = temperature(bufferTemp);
+        lseek(fd, 0, 0);
+    }
+    close(fd);
+    return temperatura;
+}
