@@ -219,13 +219,12 @@ char *getData() {
                             /* le a imagem em base64 e salva num arquivo temporário */
                             char command[210] = "cat ";
                             strcat(command, currentDir);
-                            strcat(command, " | base64 > temp.txt");
+                            strcat(command, " | base64 > temp1.txt");
                             system(command);
+                            system("tr -d '\n' < temp1.txt > temp.txt");
 
                             /* Lê o arquivo temporário */
                             FILE *fpin;
-
-
                             fpin = fopen("temp.txt", "rt");
                             if (fpin == NULL) {
                                 error("Não foi possível abrir o arquivo!");
@@ -233,10 +232,6 @@ char *getData() {
                             }
 
                             fread(imgBuffer, 1, sizeof imgBuffer, fpin);
-
-                            /* Retira um possível enter que possa ter no arquivo */
-                            char *pos = strchr(imgBuffer, '\n');
-                            pos[0] = '\0';
 
                             fclose(fpin);
                         }
@@ -317,9 +312,11 @@ char *getData() {
     char *pos = strchr(data, '\0') - 1;
     pos[0] = '\0';
 
-    strcat(data, "],");
-    strcat(data, msgBuffer);
-    strcat(data, "}");
+    strcat(data, "],");                     //fecha os slides
+    strcat(data, msgBuffer);                //pega as infos do config.properties.
+    //strcat(data,",\"temperature\":\"");
+    //strcat(data, tempBuffer);
+    strcat(data, "}");                    //fecha o json
 
     return data;
 
