@@ -6,7 +6,7 @@
 window.onload = function () {
 
 	var host = "http://localhost:3001/";
-	var remote_images = [];
+	var server_response = [];
 
 	var xmlHttp = new XMLHttpRequest();
 	xmlHttp.open("GET", host, true); // false for synchronous request
@@ -14,14 +14,13 @@ window.onload = function () {
 
 	xmlHttp.onload = function (data) {
 		// console.log(xmlHttp.response);
-		remote_images = JSON.parse(xmlHttp.responseText);
-		// console.log(remote_images);
+		server_response = JSON.parse(xmlHttp.responseText);
+		// console.log(server_response);
 		renderSlides();
+		renderWeather();
 	};
 
 	xmlHttp.send();
-
-	getWather();
 
 
 	function renderSlides() {
@@ -36,7 +35,7 @@ window.onload = function () {
 		}
 
 		/* Faz parse do JSON para objeto Slide */
-		remote_images.images.forEach(function (element) {
+		server_response.images.forEach(function (element) {
 			var slide = new Slide(element.url, element.title, element.caption, element.color);
 			console.log(element.color);
 			slides.push(slide);
@@ -55,7 +54,7 @@ window.onload = function () {
 		});
 
 		/* Configura mensagens no elemento e define a velocidade de execução de acordo com a quantidade de caracteres a uma taxa de 30 caracteres por segundo*/
-		var remote_message = remote_images.messages.join("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-----&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+		var remote_message = server_response.messages.join("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-----&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 		var message = document.getElementById("message");
 		message.innerHTML = remote_message;
 		var duration = remote_message.length / 20;
@@ -82,26 +81,16 @@ window.onload = function () {
 		}, interval);
 	}
 
-	function getWather(cityCode) {
-		// var request = new XMLHttpRequest();
-		//
-		// request.open('GET', 'http://www.climatempo.com.br/previsao-do-tempo/cidade/1399', true);
-		// request.setRequestHeader("Access-Control-Allow-Origin","*");
-		// request.send();
-		//
-		// request.onload = function (source) {
-		// 	// console.log(request.response);
-		// 	console.log(source);
-		// };
+	function renderWeather() {
+		var parser = new DOMParser();
+		var html = parser.parseFromString(server_response.weather, "text/html");
+		console.log(html.innerHTML);
 
-		// var x = document.getElementById("tempo");
-		// var y = (x.contentWindow || x.contentDocument);
-		// if (y.document) y = y.document;
-		//
-		// console.log(y);
-		//
-		// var weatherBox = y.getElementsByClassName("bg-box-prev-topo")[0];
-		// y.body.innerHTML = weatherBox.innerHTML;
+		var condição = html.getElementById("momento-condicao").textContent,
+			sensacao = html.getElementById("momento-sensacao").textContent,
+			humidade = html.getElementById("momento-humidade").textContent,
+			pressao = html.getElementById("momento-pressao").textContent,
+			tempo = document.getElementById("tempo");
 	}
 
 };

@@ -25,9 +25,15 @@
 #define BUFSIZE 1024
 #define MAXLEN  1000000                                                   //10MB
 
+/*
+ * declarations
+ */
 char *getData();
+
 char *getWeather();
-double getTemperature();
+
+char *getTemperature();
+
 double temperature(char *string);
 
 /*
@@ -319,45 +325,103 @@ char *getData() {
     char *pos = strchr(data, '\0') - 1;
     pos[0] = '\0';
 
+    char *weather = getWeather();
+//    char *temp = getTemperature();          //TODO Descomentar
+    char *temp = "43";
+
     strcat(data, "],");                     //fecha os slides
     strcat(data, msgBuffer);                //pega as infos do config.properties.
-    //strcat(data,",\"temperature\":\"");
-    //strcat(data, tempBuffer);
-    strcat(data, "}");                      //fecha o json
+    strcat(data, ",\"temperature\":\"");
+    strcat(data, temp);
+    strcat(data, "\",\"weather\":\"");
+    strcat(data, weather);
+    strcat(data, "\"}");                      //fecha o json
     fclose(fpin);
 
-    char *weather = getWeather();
-
-    double temp = getTemperature();
 
     return data;
 
 }
 
 
-char *getWeather(){
+char *getWeather() {
     char data[300000] = "";
+    char city[200];
+    char command_lajeado[200] = "curl http://www.climatempo.com.br/previsao-do-tempo/cidade/1399 > temp1.txt";
+    char command_gramado[200] = "curl http://www.climatempo.com.br/previsao-do-tempo/cidade/780 > temp1.txt";
+    char command_poa[200] = "curl http://www.climatempo.com.br/previsao-do-tempo/cidade/363 > temp1.txt";
+    char command_guapore[200] = "curl http://www.climatempo.com.br/previsao-do-tempo/cidade/2011 > temp1.txt";
+    char command_torres[200] = "curl http://www.climatempo.com.br/previsao-do-tempo/cidade/370 > temp1.txt";
 
+    /* Pega a Cidade das configurações */
     FILE *fpin;
     fpin = fopen("slides/config.properties", "rt");
-    char *msgBuffer[2000];
-    fread(msgBuffer, 1, sizeof msgBuffer, fpin);
-    char *pos = strchr(msgBuffer, ']') + 10;
+    char *configBuffer[2000];
+    fread(configBuffer, 1, sizeof configBuffer, fpin);
+    char *pos = strchr(configBuffer, ']') + 11;
+    fclose(fpin);
+
+    int i = 0;
+    for (i; i < 200; i++) {
+        if (pos[i] != '\"' && pos[i] != '\0') {
+            city[i] = pos[i];
+        }
+        else {
+            city[i] = '\0';
+            break;
+        }
+    }
+
+    /* Pega o Html do Climatempo via curl de acordo com a cidade e salva no arquivo temporário*/
+    if (strcmp(city, "Gramado\0") == 0) {
+        system(command_gramado);
+    }
+    else if (strcmp(city, "Porto Alegre\0") == 0) {
+        system(command_poa);
+    }
+    else if (strcmp(city, "Guaporé\0") == 0) {
+        system(command_guapore);
+    }
+    else if (strcmp(city, "Torres\0") == 0) {
+        system(command_torres);
+    }
+    else {
+        system(command_lajeado);
+    }
+
+    system("tr -d '\n' < temp1.txt > temp.txt");
+
+
+    /* Le as informações do arquivo temporário */
+    fpin = fopen("temp.txt", "rt");
+    fread(data, 1, sizeof data, fpin);
+    fclose(fpin);
+
+    /* Concerta problemas com aspas */
+    for (i = 0; i < sizeof data; i++) {
+        if (data[i] == '\"') {
+            data[i] = '\'';
+        }
+        else if (data[i] == '\0') {
+            break;
+        }
+    }
 
     return data;
 }
 
 double temperature(char *string) {
     int value = atoi(string);
-    double millivolts = ( value * 2.8 ) / 1024 ;
-    double temperature = ( millivolts - 0.5 ) * 100;
+    double millivolts = (value * 2.8) / 1024;
+    double temperature = (millivolts - 0.5) * 100;
     //double millivolts = (value / 4096.0) * 1800;
     //double temperature = (millivolts - 500.0) / 10.0;
     return temperature;
 }
 
-double getTemperature(){
+char *getTemperature() {
     double temperatura;
+    char str[30];
     int fd = open("/sys/devices/ocp.2/helper.14/AIN1", O_RDONLY);
 
     char bufferTemp[1024];
@@ -368,5 +432,6 @@ double getTemperature(){
         lseek(fd, 0, 0);
     }
     close(fd);
-    return temperatura;
+    snprintf(str, 50, "%f", temperatura);
+    return str;
 }
