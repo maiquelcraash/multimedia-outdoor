@@ -84,15 +84,31 @@ window.onload = function () {
 	function renderWeather() {
 		var parser = new DOMParser();
 		var html = parser.parseFromString(server_response.weather, "text/html");
+		html.innerHTML = server_response.weather;
+		//console.log(server_response.weather);
 		console.log(html.innerHTML);
 
-		var condição = html.getElementById("momento-condicao").textContent,
+		var condicao = html.getElementById("momento-condicao").textContent,
 			sensacao = html.getElementById("momento-sensacao").textContent,
 			humidade = html.getElementById("momento-humidade").textContent,
 			pressao = html.getElementById("momento-pressao").textContent,
 			tempo = document.getElementById("tempo");
+			
+			console.log(condicao);
+			
+		var element_condicao = document.getElementById("condicao"),
+			element_humidade = document.getElementById("humidade"),
+			element_sensacao = document.getElementById("sensacao"),
+			element_pressao = document.getElementById("pressao");
+			
+		element_condicao.textContent = condicao;
+		element_humidade.textContent = "Humidade: " + humidade;
+		element_sensacao.textContent = "Sensação: " + sensacao;
+		element_pressao.textContent = "Pressao: " + pressao;
+		
+		
+		
 	}
 
 };
-
 

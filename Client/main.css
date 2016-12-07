@@ -67,6 +67,9 @@ figure#slideshow .slide img {
     position: fixed;
     top: 20px;
     right: 20px;
+    color: black;
+    font-family: "Arial", sans-serif;
+    font-size: 14pt;
 }
 
 #marquee {
