@@ -324,6 +324,8 @@ char *getData() {
                 bzero(captionBuffer, sizeof captionBuffer);
                 bzero(titleBuffer, sizeof titleBuffer);
 
+
+
             }
         }
     }
@@ -352,6 +354,8 @@ char *getData() {
     strcat(data, "\"}");                      //fecha o json
     fclose(fpin);
 
+    bzero(msgBuffer, sizeof msgBuffer);
+    bzero(weather, sizeof weather);
 
     return data;
 
