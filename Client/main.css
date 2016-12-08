@@ -39,7 +39,6 @@ figure#slideshow .slide {
     display: table-row;
     text-align: center;
     vertical-align: middle;
-    margin-left: auto;
     margin-right: auto;
 
 }
@@ -57,19 +56,43 @@ figure#slideshow .slide .title, figure#slideshow .slide .caption {
 }
 
 figure#slideshow .slide img {
-    max-width: 70vw;  !important;
+    max-width: 65vw;  !important;
     max-height: 76vh;  !important;
 }
 
 #tempo {
-    width: 30vw;
+    width: 25vw;
     /*max-height: 76vh;*/
     position: fixed;
     top: 20px;
-    right: 20px;
+    right: 10px;
     color: black;
     font-family: "Arial", sans-serif;
     font-size: 14pt;
+}
+
+#tempo #condicao {
+    margin-top: 20px;
+    font-size: 20pt;
+    font-weight: bold;
+}
+
+#tempo #cidade {
+    color: orangered;
+    font-size: 24pt;
+    font-weight: bold;
+}
+
+#tempo #hora {
+    margin-top: 20px;
+    font-size: 24pt;
+    font-weight: bold;
+}
+
+#tempo #temperatura {
+    font-size: 30pt;
+    font-weight: bold;
+    color: orangered;
 }
 
 #marquee {

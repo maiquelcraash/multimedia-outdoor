@@ -23,7 +23,7 @@
 #include <fcntl.h>
 
 #define BUFSIZE 1024
-#define MAXLEN  1000000                                                   //10MB
+#define MAXLEN  4000000                                                   //10MB
 
 /*
  * declarations
@@ -268,6 +268,7 @@ char *getData() {
                                     titleBuffer[i] = textBuffer[i];
                                 }
                                 else {
+                                    titleBuffer[i] = '\0';
                                     break;
                                 }
                             }
@@ -278,6 +279,18 @@ char *getData() {
                                     captionBuffer[i] = pos[i];
                                 }
                                 else {
+                                    captionBuffer[i] = '\0';
+                                    break;
+                                }
+                            }
+
+                            /* Pega o color */
+                            for (i = 0; i < 200; i++) {
+                                if (color[i] != '\n' && color[i] != '\0') {
+                                    colorBuffer[i] = color[i];
+                                }
+                                else {
+                                    colorBuffer[i] = '\0';
                                     break;
                                 }
                             }
@@ -286,6 +299,7 @@ char *getData() {
                         bzero(currentDir, sizeof currentDir);
                     }
                 }
+                closedir(innerDIR);
 
                 /* monta o slide em JSON */
                 //"{\"images\":[{\"url\":\"../img/1.png\",\"title\":\"Natura\",\"caption\":\"Shampoo\",\"color\":\"rgb(255,0,0)\"},{\"url\":\"http://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/happy-bot-tinkerbot.jpg\",\"title\":\"Robô\",\"caption\":\"Feliz\",\"color\":\"#00F\"},{\"url\":\"http://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/dada-voltaire-tinkerbot.jpg\",\"title\":\"Outro robo\",\"caption\":\"Triste pq n demos nome\",\"color\":\"green\"}],\"messages\":[\"Outro robo lindo e querido\",\"O Pritsch n acreditva que podia ter mais mensagens\"],\"city\":1399}";
