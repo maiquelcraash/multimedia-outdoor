@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
     int n; /* message byte size */
 
     //Montar os slots para ler temperatura
-    //system( "echo cape-bone-iio > /sys/devices/bone_capemgr.8/slots" );
+    system( "echo cape-bone-iio > /sys/devices/bone_capemgr.8/slots" );
 
     char header[1024] = "HTTP/1.0 200 OK\n"
             "Content-type: application/json\n"
@@ -342,8 +342,8 @@ char *getData() {
     pos[0] = '\0';
 
     char *weather = getWeather();
-//    char *temp = getTemperature();          //TODO Descomentar
-    char *temp = "43";
+    char *temp = getTemperature();          //TODO Descomentar
+//    char *temp = "43";
 
     strcat(data, "],");                     //fecha os slides
     strcat(data, msgBuffer);                //pega as infos do config.properties.
@@ -430,8 +430,7 @@ char *getWeather() {
 
 double temperature(char *string) {
     int value = atoi(string);
-    double millivolts = (value * 2.8) / 1024;
-    double temperature = (millivolts - 0.5) * 100;
+    double temperature = value /10;    
     //double millivolts = (value / 4096.0) * 1800;
     //double temperature = (millivolts - 500.0) / 10.0;
     return temperature;
@@ -450,6 +449,7 @@ char *getTemperature() {
         lseek(fd, 0, 0);
     }
     close(fd);
-    snprintf(str, 50, "%f", temperatura);
+	int temp = (int) temperatura;
+    snprintf(str, 50, "%d", temp);
     return str;
 }

@@ -32,7 +32,7 @@ window.onload = function () {
 			server_response_newest = JSON.parse(xmlHttp.responseText);
 
 			//valida se as informações provenientes do server são novas
-			if (!deepCompare(server_response_newest, server_response_current)) {
+			if (!deepCompare(server_response_newest.images, server_response_current.images)) {
 
 				//valida se os slides são diferentes, desconsiderando a temperatura. Se for, atualiza os slides
 				delete server_response_current.temperatura;
